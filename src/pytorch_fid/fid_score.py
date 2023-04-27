@@ -316,6 +316,7 @@ def main():
                                           args.dims,
                                           num_workers)
     print('FID: ', fid_value)
+    return fid_value
 
 
 if __name__ == '__main__':
