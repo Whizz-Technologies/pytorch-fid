@@ -272,30 +272,33 @@ class fid():
 
 
     def run_fid(self):
-        parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
-        parser.add_argument('--batch-size', type=int, default=50,
-                            help='Batch size to use')
-        parser.add_argument('--num-workers', type=int,
-                            help=('Number of processes to use for data loading. '
-                                'Defaults to `min(8, num_cpus)`'))
-        parser.add_argument('--device', type=str, default=None,
-                            help='Device to use. Like cuda, cuda:0 or cpu')
-        parser.add_argument('--dims', type=int, default=2048,
-                            choices=list(InceptionV3.BLOCK_INDEX_BY_DIM),
-                            help=('Dimensionality of Inception features to use. '
-                                'By default, uses pool3 features'))
-        parser.add_argument('--save-stats', action='store_true',
-                            help=('Generate an npz archive from a directory of samples. '
-                                'The first path is used as input and the second as output.'))
+        # parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+        # parser.add_argument('--batch-size', type=int, default=50,
+        #                     help='Batch size to use')
+        # parser.add_argument('--num-workers', type=int,
+        #                     help=('Number of processes to use for data loading. '
+        #                         'Defaults to `min(8, num_cpus)`'))
+        # parser.add_argument('--device', type=str, default=None,
+        #                     help='Device to use. Like cuda, cuda:0 or cpu')
+        # parser.add_argument('--dims', type=int, default=2048,
+        #                     choices=list(InceptionV3.BLOCK_INDEX_BY_DIM),
+        #                     help=('Dimensionality of Inception features to use. '
+        #                         'By default, uses pool3 features'))
+        # parser.add_argument('--save-stats', action='store_true',
+        #                     help=('Generate an npz archive from a directory of samples. '
+        #                         'The first path is used as input and the second as output.'))
     
-        args = parser.parse_args()
-
-        if args.device is None:
+        # args = parser.parse_args()
+        batch_size = 50
+        dims = 2048
+        device = None
+        if device is None:
             device = torch.device('cuda' if (torch.cuda.is_available()) else 'cpu')
         else:
-            device = torch.device(args.device)
-
-        if args.num_workers is None:
+            device = torch.device(device)
+        
+        num_workers = None
+        if num_workers is None:
             try:
                 num_cpus = len(os.sched_getaffinity(0))
             except AttributeError:
@@ -306,18 +309,19 @@ class fid():
 
             num_workers = min(num_cpus, 8) if num_cpus is not None else 0
         else:
-            num_workers = args.num_workers
+            num_workers = num_workers
 
         path = ['/content/input','/content/output']
-
-        if args.save_stats:
-            self.save_fid_stats(path, args.batch_size, device, args.dims, num_workers)
+        
+        save_stats = False
+        if save_stats:
+            self.save_fid_stats(path, batch_size, device, dims, num_workers)
             return
 
         fid_value = self.calculate_fid_given_paths(path,
-                                            args.batch_size,
+                                            batch_size,
                                             device,
-                                            args.dims,
+                                            dims,
                                             num_workers)
         print('FID: ', fid_value)
         return fid_value
