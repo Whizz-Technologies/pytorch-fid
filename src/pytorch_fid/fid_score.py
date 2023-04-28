@@ -76,6 +76,10 @@ class ImagePathDataset(torch.utils.data.Dataset):
 
 class fid():
 
+    def __init__(self,path):
+        self.path = path
+
+
     def get_activations(self,files, model, batch_size=50, dims=2048, device='cpu',
                         num_workers=1):
         """Calculates the activations of the pool_3 layer for all images.
@@ -311,14 +315,14 @@ class fid():
         else:
             num_workers = num_workers
 
-        path = ['/content/input','/content/output']
+        # path = ['/content/input','/content/output']
         
         save_stats = False
         if save_stats:
-            self.save_fid_stats(path, batch_size, device, dims, num_workers)
+            self.save_fid_stats(self.path, batch_size, device, dims, num_workers)
             return
 
-        fid_value = self.calculate_fid_given_paths(path,
+        fid_value = self.calculate_fid_given_paths(self.path,
                                             batch_size,
                                             device,
                                             dims,
@@ -328,5 +332,6 @@ class fid():
 
 
 if __name__ == '__main__':
-    f = fid()
+    path = ['/content/input','/content/output']
+    f = fid(path)
     f.run_fid()
