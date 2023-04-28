@@ -293,7 +293,7 @@ class fid():
         #                         'The first path is used as input and the second as output.'))
     
         # args = parser.parse_args()
-        batch_size = 50
+        batch_size = 1
         dims = 2048
         device = None
         if device is None:
